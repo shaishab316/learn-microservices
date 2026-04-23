@@ -3,7 +3,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 import { AppController } from './api-gateway.controller';
 import { TerminusModule } from '@nestjs/terminus';
 import { HealthController } from './health.controller';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -12,25 +12,31 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     ClientsModule.registerAsync([
       {
         name: 'USER_SERVICE',
-        useFactory: (config: ConfigService) => ({
-          transport: Transport.REDIS,
+        useFactory: () => ({
+          transport: Transport.KAFKA,
           options: {
-            host: config.get('REDIS_HOST') as string,
-            port: config.get<number>('REDIS_PORT'),
+            client: {
+              brokers: [process.env.KAFKA_BROKER ?? 'kafka:9092'],
+            },
+            consumer: {
+              groupId: 'user-consumer-gateway',
+            },
           },
         }),
-        inject: [ConfigService],
       },
       {
         name: 'ORDER_SERVICE',
-        useFactory: (config: ConfigService) => ({
-          transport: Transport.REDIS,
+        useFactory: () => ({
+          transport: Transport.KAFKA,
           options: {
-            host: config.get('REDIS_HOST') as string,
-            port: config.get<number>('REDIS_PORT'),
+            client: {
+              brokers: [process.env.KAFKA_BROKER ?? 'kafka:9092'],
+            },
+            consumer: {
+              groupId: 'order-consumer-gateway',
+            },
           },
         }),
-        inject: [ConfigService],
       },
     ]),
   ],

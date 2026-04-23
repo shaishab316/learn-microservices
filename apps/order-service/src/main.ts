@@ -6,10 +6,14 @@ async function bootstrap() {
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
     OrderServiceModule,
     {
-      transport: Transport.REDIS,
+      transport: Transport.KAFKA,
       options: {
-        host: process.env.REDIS_HOST,
-        port: parseInt(process.env.REDIS_PORT!),
+        client: {
+          brokers: [process.env.KAFKA_BROKER ?? 'kafka:9092'],
+        },
+        consumer: {
+          groupId: 'order-consumer',
+        },
       },
     },
   );

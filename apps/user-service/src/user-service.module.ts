@@ -1,14 +1,23 @@
 import { Module } from '@nestjs/common';
-import { UserServiceController } from './user-service.controller';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { UserServiceController } from './user-service.controller';
 
 @Module({
   imports: [
-    ClientsModule.register([
+    ClientsModule.registerAsync([
       {
         name: 'ORDER_SERVICE',
-        transport: Transport.REDIS,
-        options: { host: 'redis', port: 6379 },
+        useFactory: () => ({
+          transport: Transport.KAFKA,
+          options: {
+            client: {
+              brokers: [process.env.KAFKA_BROKER ?? 'kafka:9092'],
+            },
+            consumer: {
+              groupId: 'order-consumer-gateway-client',
+            },
+          },
+        }),
       },
     ]),
   ],

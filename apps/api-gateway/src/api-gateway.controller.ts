@@ -11,7 +11,7 @@ export class AppController {
 
   @Get('user')
   getUser() {
-    return this.client.send({ cmd: 'get_user' }, 1);
+    return this.client.send('get_user', 1);
   }
 
   @Get('register')
@@ -22,7 +22,7 @@ export class AppController {
 
   @Get('order/:id')
   getOrder(@Param('id') id: string) {
-    return this.orderClient.send({ cmd: 'get_order' }, +id).pipe(
+    return this.orderClient.send('get_order', +id).pipe(
       catchError((err: Error & { status?: number }) => {
         throw new HttpException(err.message, err.status ?? 500);
       }),
