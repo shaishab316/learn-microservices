@@ -10,7 +10,7 @@ async function bootstrap() {
     {
       transport: Transport.REDIS,
       options: {
-        host: 'localhost',
+        host: 'redis',
         port: 6379,
       },
     },

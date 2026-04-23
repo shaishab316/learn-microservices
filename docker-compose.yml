@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:alpine
+    ports:
+      - '6379:6379'
+
+  api-gateway:
+    build: .
+    command: node dist/apps/api-gateway/main
+    ports:
+      - '3004:3004'
+    depends_on:
+      - redis
+
+  user-service:
+    build: .
+    command: node dist/apps/user-service/main
+    depends_on:
+      - redis
+
+  order-service:
+    build: .
+    command: node dist/apps/order-service/main
+    depends_on:
+      - redis

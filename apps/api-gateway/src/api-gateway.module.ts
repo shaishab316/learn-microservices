@@ -9,14 +9,14 @@ import { AppController } from './api-gateway.controller';
         name: 'USER_SERVICE',
         transport: Transport.REDIS,
         options: {
-          host: 'localhost',
+          host: 'redis',
           port: 6379,
         },
       },
       {
         name: 'ORDER_SERVICE',
         transport: Transport.REDIS,
-        options: { host: 'localhost', port: 6379 },
+        options: { host: 'redis', port: 6379 },
       },
     ]),
   ],
