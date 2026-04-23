@@ -1,5 +1,6 @@
-import { Controller, Get, Inject, Param } from '@nestjs/common';
+import { Controller, Get, HttpException, Inject, Param } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
+import { catchError } from 'rxjs';
 
 @Controller()
 export class AppController {
@@ -21,6 +22,10 @@ export class AppController {
 
   @Get('order/:id')
   getOrder(@Param('id') id: string) {
-    return this.orderClient.send({ cmd: 'get_order' }, +id);
+    return this.orderClient.send({ cmd: 'get_order' }, +id).pipe(
+      catchError((err: Error & { status?: number }) => {
+        throw new HttpException(err.message, err.status ?? 500);
+      }),
+    );
   }
 }
