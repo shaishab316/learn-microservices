@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { NestFactory } from '@nestjs/core';
 import { Transport, MicroserviceOptions } from '@nestjs/microservices';
 import { UserServiceModule } from './user-service.module';
@@ -10,8 +8,8 @@ async function bootstrap() {
     {
       transport: Transport.REDIS,
       options: {
-        host: 'redis',
-        port: 6379,
+        host: process.env.REDIS_HOST,
+        port: parseInt(process.env.REDIS_PORT!),
       },
     },
   );

@@ -18,15 +18,18 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
+    env_file: .env
 
   user-service:
     build: .
     command: node dist/apps/user-service/main
     depends_on:
       - redis
+    env_file: .env
 
   order-service:
     build: .
     command: node dist/apps/order-service/main
     depends_on:
       - redis
+    env_file: .env

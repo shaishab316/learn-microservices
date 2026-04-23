@@ -7,7 +7,10 @@ async function bootstrap() {
     OrderServiceModule,
     {
       transport: Transport.REDIS,
-      options: { host: 'redis', port: 6379 },
+      options: {
+        host: process.env.REDIS_HOST,
+        port: parseInt(process.env.REDIS_PORT!),
+      },
     },
   );
   await app.listen();

@@ -3,23 +3,34 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 import { AppController } from './api-gateway.controller';
 import { TerminusModule } from '@nestjs/terminus';
 import { HealthController } from './health.controller';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
     TerminusModule,
-    ClientsModule.register([
+    ClientsModule.registerAsync([
       {
         name: 'USER_SERVICE',
-        transport: Transport.REDIS,
-        options: {
-          host: 'redis',
-          port: 6379,
-        },
+        useFactory: (config: ConfigService) => ({
+          transport: Transport.REDIS,
+          options: {
+            host: config.get('REDIS_HOST') as string,
+            port: config.get<number>('REDIS_PORT'),
+          },
+        }),
+        inject: [ConfigService],
       },
       {
         name: 'ORDER_SERVICE',
-        transport: Transport.REDIS,
-        options: { host: 'redis', port: 6379 },
+        useFactory: (config: ConfigService) => ({
+          transport: Transport.REDIS,
+          options: {
+            host: config.get('REDIS_HOST') as string,
+            port: config.get<number>('REDIS_PORT'),
+          },
+        }),
+        inject: [ConfigService],
       },
     ]),
   ],
