@@ -13,6 +13,11 @@ services:
       - '3004:3004'
     depends_on:
       - redis
+    healthcheck:
+      test: ['CMD', 'wget', '-qO-', 'http://localhost:3004/health']
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   user-service:
     build: .
