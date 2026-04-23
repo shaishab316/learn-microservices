@@ -1,12 +1,24 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 // apps/user-service/src/user-service.controller.ts
-import { Controller } from '@nestjs/common';
-import { EventPattern, MessagePattern, Payload } from '@nestjs/microservices';
+import { Controller, Inject } from '@nestjs/common';
+import {
+  ClientProxy,
+  EventPattern,
+  MessagePattern,
+  Payload,
+} from '@nestjs/microservices';
+import { firstValueFrom } from 'rxjs';
 
 @Controller()
 export class UserServiceController {
+  constructor(@Inject('ORDER_SERVICE') private orderClient: ClientProxy) {}
+
   @MessagePattern({ cmd: 'get_user' })
-  getUser(id: number) {
-    return { id, name: 'Shaishab' };
+  async getUser(@Payload() id: number) {
+    const order = await firstValueFrom(
+      this.orderClient.send({ cmd: 'get_order' }, id),
+    );
+    return { id, name: 'Shaishab', order };
   }
 
   @EventPattern('user_registered')
